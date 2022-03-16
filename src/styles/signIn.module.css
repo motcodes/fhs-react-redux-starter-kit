@@ -1,0 +1,20 @@
+.signinContainer {
+  width: 100%;
+  max-width: 320px;
+  margin: 2rem auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.signinContainer p {
+  margin: 0;
+}
+.signinContainer label input {
+  width: 100%;
+}
+.signinContainer .buttonGroup {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
