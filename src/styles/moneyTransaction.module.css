@@ -1,0 +1,80 @@
+.container {
+  width: 100%;
+  margin: 0 auto;
+  padding-inline: 24px;
+  font-size: 112.5%;
+}
+.container header {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  padding-block: 24px;
+}
+
+.container section {
+  max-width: 640px;
+  margin: 0 auto 3rem;
+}
+
+.createContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.createContainer h1 {
+  display: inline-flex;
+  gap: 4rem;
+  font-size: clamp(1.5rem, 1.8vw + 1.1rem, 2rem);
+  font-weight: 400;
+  margin-bottom: 2rem;
+}
+.createContainer form {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  align-items: end;
+  gap: 2rem;
+}
+.createContainer form select,
+.createContainer form input {
+  width: 100%;
+}
+.createContainer form button {
+  height: fit-content;
+}
+
+.listContainer {
+  display: flex;
+  flex-direction: column;
+}
+.listContainer ul {
+  width: 100%;
+  list-style: none;
+  padding: 0;
+}
+
+.listItem {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+  width: 100%;
+  padding: 8px;
+  margin-block: 4px;
+  border-radius: 4px;
+  transition: all 333ms ease-in-out;
+}
+.listItem:hover {
+  box-shadow: inset 0px 0.8px 0px -0.25px rgba(255, 255, 255, 0.2),
+    0px 0.5px 1px rgba(54, 122, 246, 0.25),
+    0px 0px 0px 3px rgba(58, 108, 217, 0.5);
+}
+.listItem .username {
+  flex-grow: 1;
+}
+.listItem button {
+  width: 80px;
+}
+
+.listItem.strikethrough p {
+  text-decoration: 2px line-through;
+}

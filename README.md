@@ -1,17 +1,10 @@
 # FHS React/Redux Starter Kit
 
+by Matthias Oberholzer [@motcodes](https://twitter.com/motcodes)
+
 This a starter kit for students of the University of Applied Sciences Salzburg, for the lectures:
 
-- Frontend Development 2 (Bachelor)
-- Client Side Web-Engineering 2 (Master)
-
-It includes React/Redux/Storybook and was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
-
-# Prerequisite
-
-- Node 8.10 or later
-  - Windows https://github.com/coreybutler/nvm-windows
-  - OSX/Linux https://github.com/creationix/nvm
+- Fullstack Development (Bachelor)
 
 # Setup
 
@@ -24,9 +17,8 @@ npm run start
 # Available Scripts
 
 ```
-npm run start # starts storybook and the react app
-npm run start:app # starts the react app
-npm run start:storybook # starts storybook
+npm run start # react app
+npm run storybook # starts storybook
 
 npm run build # builds storybook and the react app
 npm run build:app # builds the react app

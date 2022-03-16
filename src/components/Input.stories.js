@@ -1,8 +1,18 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { storiesOf } from '@storybook/react'
-import { action } from '@storybook/addon-actions'
-import { Input } from './Input'
 
-storiesOf('Input', module).add('primary (default)', () => (
-  <Input name="Input" id="input" value="name" onChange={action('onChange')} />
-))
+import { Input } from './input'
+
+const StoryInput = () => {
+  const [input, setInput] = useState('')
+  return (
+    <Input
+      name="Input"
+      id="input"
+      value={input}
+      onChange={(e) => setInput(e.target.value)}
+    />
+  )
+}
+
+storiesOf('Input', module).add('Default', () => <StoryInput />)
