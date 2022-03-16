@@ -1,7 +1,7 @@
 module.exports = {
   env: {
     browser: true,
-    es2021: true,
+    es6: true,
     jest: true
   },
   extends: ['plugin:react/recommended', 'standard'],
@@ -17,5 +17,10 @@ module.exports = {
     'react/prop-types': 0,
     semi: [2, 'never'],
     'space-before-function-paren': 0
+  },
+  settings: {
+    react: {
+      version: 'detect'
+    }
   }
 }
