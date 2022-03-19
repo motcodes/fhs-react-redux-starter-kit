@@ -5,6 +5,7 @@ export const Select = ({
   className,
   id,
   name,
+  label = '',
   value = 0,
   options = [{ value: 0, label: 'Value' }],
   onChange,
@@ -12,7 +13,7 @@ export const Select = ({
 }) => {
   return (
     <label className={`${style.container} ${className}`} htmlFor={id}>
-      {name}
+      {label}
       <select {...rest} id={id} name={name} value={value} onChange={onChange}>
         Select
         {options &&

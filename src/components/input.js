@@ -6,22 +6,20 @@ export const Input = ({
   name,
   id,
   value,
-  isError,
+  error,
   onChange,
   ...rest
 }) => {
   return (
     <label
       className={`${style.container} ${className} ${
-        isError ? style.isError : ''
+        error ? style.isError : ''
       }`}
       htmlFor={id}
     >
       {name}
       <input {...rest} id={id} name={name} value={value} onChange={onChange} />
-      {isError && (
-        <span className={style.errorNotice}>{name} cannot be blank</span>
-      )}
+      {error && <span className={style.errorNotice}>{error}</span>}
     </label>
   )
 }

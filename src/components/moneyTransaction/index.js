@@ -1,56 +1,49 @@
-import React, { useState } from 'react'
-import { Button } from '../button'
+import React from 'react'
 import styles from '../../styles/moneyTransaction.module.css'
 import { Create } from './create'
 import { List } from './list'
+import { useDb } from '../../context/db'
+import { useFormik } from 'formik'
 
 export const MoneyTransaction = () => {
-  const [formData, setFormData] = useState({
-    userId: 0,
-    amount: 0,
-    isPaid: false
-  })
-  const [transactionList, setTransactionList] = useState([])
+  const { dbData, setDbData } = useDb()
 
-  const handleOnSubmit = (e) => {
-    e.preventDefault()
-    setTransactionList((prev) => [
-      ...prev,
-      { ...formData, id: transactionList.length }
-    ])
-    setFormData({
-      userId: 0,
-      amount: 0,
-      isPaid: false
-    })
-  }
+  const formik = useFormik({
+    initialValues: {
+      creditorId: 1,
+      debitorId: 1,
+      amount: 0
+    },
+    validate: ({ amount }) => {
+      const errors = {}
+      if (amount <= 0) {
+        errors.amount = "Amount can't be 0 or less"
+      }
+      return errors
+    },
+    validateOnChange: false,
+    onSubmit: (transaction) => {
+      const newId = dbData.moneyTransaction.length
+      setDbData(({ moneyTransaction, ...rest }) => ({
+        ...rest,
+        moneyTransaction: [
+          ...moneyTransaction,
+          {
+            id: newId,
+            creditorId: parseInt(transaction.creditorId),
+            debitorId: parseInt(transaction.debitorId),
+            amount: transaction.amount,
+            paidAt: null
+          }
+        ]
+      }))
+    }
+  })
 
   return (
     <div className={styles.container}>
-      <header>
-        <Button>Button</Button>
-      </header>
-      <Create
-        amount={formData.amount}
-        selectValue={formData.userId}
-        onSubmit={handleOnSubmit}
-        onChangeSelect={(e) =>
-          setFormData((prev) => ({
-            ...prev,
-            userId: parseInt(e.target.value)
-          }))
-        }
-        onChangeAmount={(e) => {
-          setFormData((prev) => ({
-            ...prev,
-            amount: e.target.value
-          }))
-        }}
-      />
-      <List
-        transactionList={transactionList}
-        setTransactionList={setTransactionList}
-      />
+      <Create formik={formik} />
+      <List />
     </div>
   )
 }
