@@ -1,5 +1,5 @@
 {
-  "money-transaction": [
+  "moneyTransaction": [
     {
       "id": 1,
       "creditorId": 1,
