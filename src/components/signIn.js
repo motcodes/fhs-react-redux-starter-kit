@@ -1,19 +1,21 @@
 import React from 'react'
-import { Button } from './button'
-import { Input } from './input'
-
-import styles from '../styles/signIn.module.css'
 import { useNavigate } from 'react-router-dom'
 import { useFormik } from 'formik'
-import { useDb } from '../context/db'
+
+import { Button } from './button'
+import { Input } from './input'
+import { useUser } from '../context/userContext'
+import { useDbUsers } from '../utils/users'
+import styles from '../styles/signIn.module.css'
 
 export const SignIn = () => {
   const navigate = useNavigate()
-  const { dbData, logIn } = useDb()
+  const { logIn } = useUser()
+  const dbUsers = useDbUsers()
 
   const validate = ({ username, password }) => {
     const errors = {}
-    const foundUser = dbData.user.find(
+    const foundUser = dbUsers.find(
       (user) => user.username === username && user.password === password
     )
     if (!foundUser) {

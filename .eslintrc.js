@@ -16,7 +16,8 @@ module.exports = {
   rules: {
     'react/prop-types': 0,
     semi: [2, 'never'],
-    'space-before-function-paren': 0
+    'space-before-function-paren': 0,
+    'multiline-ternary': 0
   },
   settings: {
     react: {
