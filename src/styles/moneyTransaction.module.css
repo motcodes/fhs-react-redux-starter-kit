@@ -41,6 +41,7 @@
 }
 .createContainer form button {
   height: fit-content;
+  grid-column: span 3;
 }
 
 .listContainer {

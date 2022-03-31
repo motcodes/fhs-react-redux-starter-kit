@@ -1,74 +1,71 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Button } from './button'
 import { Input } from './input'
 
 import styles from '../styles/signIn.module.css'
+import { useNavigate } from 'react-router-dom'
+import { useFormik } from 'formik'
+import { useDb } from '../context/db'
 
 export const SignIn = () => {
-  const [username, setUsername] = useState({ value: '', isError: false })
-  const [password, setPassword] = useState({ value: '', isError: false })
-  const [isSubmitted, toggleSubmit] = useState(false)
+  const navigate = useNavigate()
+  const { dbData, logIn } = useDb()
+
+  const validate = ({ username, password }) => {
+    const errors = {}
+    const foundUser = dbData.user.find(
+      (user) => user.username === username && user.password === password
+    )
+    if (!foundUser) {
+      errors.username = "doesn't match user"
+      errors.password = "doesn't match user"
+    }
+    return errors
+  }
+
+  const formik = useFormik({
+    initialValues: {
+      username: '',
+      password: ''
+    },
+    validate,
+    validateOnChange: false,
+    onSubmit: (user) => {
+      logIn(user)
+      navigate('/money-transactions')
+    }
+  })
+
   return (
     <>
-      <form
-        className={styles.signinContainer}
-        onSubmit={(e) => {
-          e.preventDefault()
-          if (!username.value) {
-            setUsername((prev) => ({ ...prev, isError: true }))
-          } else {
-            setUsername((prev) => ({ ...prev, isError: false }))
-          }
-          if (!password.value) {
-            setPassword((prev) => ({ ...prev, isError: true }))
-          } else {
-            setPassword((prev) => ({ ...prev, isError: false }))
-          }
-
-          toggleSubmit(!isSubmitted)
-        }}
-      >
+      <form className={styles.signinContainer} onSubmit={formik.handleSubmit}>
         <Input
-          name="Username"
+          name="username"
           id="username"
-          value={username.value}
-          isError={username.isError}
-          onChange={(e) =>
-            setUsername((prev) => ({ ...prev, value: e.target.value }))
-          }
+          type="text"
+          error={formik.errors.username}
+          onChange={formik.handleChange}
+          value={formik.values.username}
         />
         <Input
-          name="Password"
+          name="password"
           id="password"
           type="password"
-          value={password.value}
-          isError={password.isError}
-          onChange={(e) =>
-            setPassword((prev) => ({ ...prev, value: e.target.value }))
-          }
+          error={formik.errors.password}
+          onChange={formik.handleChange}
+          value={formik.values.password}
         />
         <div className={styles.buttonGroup}>
           <Button type="submit">Sign In</Button>
-          <Button type="submit" variant="secondary">
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={() => navigate('/sign-up')}
+          >
             Sign Up
           </Button>
         </div>
       </form>
-      <div className={styles.signinContainer}>
-        <p>Data:</p>
-        <small>(for showing purposes)</small>
-        <pre>
-          {JSON.stringify(
-            {
-              username,
-              password,
-              isSubmitted
-            },
-            null,
-            2
-          )}
-        </pre>
-      </div>
     </>
   )
 }

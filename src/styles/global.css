@@ -15,3 +15,23 @@ html {
   -moz-osx-font-smoothing: grayscale;
   letter-spacing: 0.5px;
 }
+
+.header {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  justify-content: end;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.header p {
+  font-size: 1.25rem;
+  font-weight: 400;
+}
+.header a {
+  text-decoration: none;
+}
+.header a:hover {
+  text-decoration: underline;
+}
