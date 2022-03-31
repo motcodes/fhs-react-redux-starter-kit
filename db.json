@@ -1,0 +1,126 @@
+{
+  "moneyTransaction": [
+    {
+      "id": 1,
+      "creditorId": 1,
+      "debitorId": 2,
+      "amount": 10,
+      "paidAt": "2022-03-26T12:27:03.563Z",
+      "isPaid": true
+    },
+    {
+      "id": 2,
+      "creditorId": 3,
+      "debitorId": 1,
+      "amount": 11.2,
+      "paidAt": "2000-01-01T00:00:00+01+00"
+    },
+    {
+      "id": 3,
+      "creditorId": 2,
+      "debitorId": 3,
+      "amount": 332.67,
+      "paidAt": null
+    },
+    {
+      "id": 4,
+      "creditorId": 2,
+      "debitorId": 1,
+      "amount": 332.67,
+      "paidAt": null
+    },
+    {
+      "id": 5,
+      "creditorId": 2,
+      "debitorId": 1,
+      "amount": 120,
+      "paidAt": "2022-03-26T12:26:42.108Z",
+      "isPaid": true
+    },
+    {
+      "id": 6,
+      "creditorId": 1,
+      "debitorId": 3,
+      "amount": 666,
+      "paidAt": "2022-03-26T12:26:42.523Z",
+      "isPaid": true
+    },
+    {
+      "id": 7,
+      "creditorId": 1,
+      "debitorId": 1,
+      "amount": 777,
+      "paidAt": null,
+      "isPaid": false
+    },
+    {
+      "id": 8,
+      "creditorId": 1,
+      "debitorId": 3,
+      "amount": 5555,
+      "paidAt": "2022-03-26T12:30:25.639Z",
+      "isPaid": true
+    },
+    {
+      "id": 9,
+      "creditorId": 3,
+      "debitorId": 4,
+      "amount": 56543.23545,
+      "paidAt": "2022-03-26T12:30:21.534Z",
+      "isPaid": true
+    },
+    {
+      "id": 10,
+      "creditorId": 3,
+      "debitorId": 1,
+      "amount": 1233,
+      "paidAt": null
+    },
+    {
+      "id": 11,
+      "creditorId": 4,
+      "debitorId": 5,
+      "amount": 7774,
+      "paidAt": null
+    },
+    {
+      "id": 12,
+      "creditorId": 5,
+      "debitorId": 3,
+      "amount": 620,
+      "paidAt": null
+    }
+  ],
+  "user": [
+    {
+      "id": 1,
+      "username": "sepp",
+      "password": "sepp",
+      "name": "Sepp"
+    },
+    {
+      "id": 2,
+      "username": "mike42",
+      "password": "mike42",
+      "name": "Mike"
+    },
+    {
+      "id": 3,
+      "username": "fabs",
+      "password": "fabs",
+      "name": "Fabian"
+    },
+    {
+      "id": 4,
+      "name": "Matthias",
+      "username": "mot",
+      "password": "mot"
+    },
+    {
+      "id": 5,
+      "name": "alien",
+      "username": "alien",
+      "password": "cat"
+    }
+  ]
+}

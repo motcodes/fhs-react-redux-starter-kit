@@ -6,16 +6,16 @@ import { BrowserRouter } from 'react-router-dom'
 import configureStore from './store'
 import App from './App'
 import reportWebVitals from './reportWebVitals'
-import { DbProvider } from './context/db'
+import { UserProvider } from './context/userContext'
 
 ReactDOM.render(
   <BrowserRouter>
     <React.StrictMode>
-      <DbProvider>
+      <UserProvider>
         <Provider store={configureStore()}>
           <App />
         </Provider>
-      </DbProvider>
+      </UserProvider>
     </React.StrictMode>
   </BrowserRouter>,
   document.getElementById('root')

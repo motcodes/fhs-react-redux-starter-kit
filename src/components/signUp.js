@@ -4,11 +4,13 @@ import { useFormik } from 'formik'
 import { Button } from './button'
 import { Input } from './input'
 import styles from '../styles/signIn.module.css'
-import { useDb } from '../context/db'
+import { useDbUsers } from '../utils/users'
+import { useUser } from '../context/userContext'
 
 export const SignUp = () => {
   const navigate = useNavigate()
-  const { dbData, setDbData, logIn } = useDb()
+  const { addUser } = useUser()
+  const dbUsers = useDbUsers()
 
   const validate = ({ name, username, password }) => {
     const errors = {}
@@ -18,7 +20,7 @@ export const SignUp = () => {
     if (!username) {
       errors.username = 'Required'
     }
-    if (dbData.user.some((user) => user.username === username)) {
+    if (dbUsers.some((user) => user.username === username)) {
       errors.username = 'Username already taken'
     }
     if (!password) {
@@ -35,14 +37,9 @@ export const SignUp = () => {
     },
     validate,
     validateOnChange: false,
-    onSubmit: (newUser) => {
-      const newUserId = dbData.user.length
-      const currentUser = { id: newUserId, ...newUser }
-      setDbData(({ user, ...rest }) => ({
-        ...rest,
-        user: [...user, currentUser]
-      }))
-      logIn(currentUser)
+    onSubmit: (formData) => {
+      const newUser = { id: dbUsers.length + 1, ...formData }
+      addUser(newUser)
       navigate('/money-transactions')
     }
   })

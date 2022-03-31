@@ -1,12 +1,19 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import styles from '../../styles/moneyTransaction.module.css'
 import { Create } from './create'
 import { List } from './list'
-import { useDb } from '../../context/db'
 import { useFormik } from 'formik'
+import { addTransaction, useTransaction } from '../../utils/transactions'
 
 export const MoneyTransaction = () => {
-  const { dbData, setDbData } = useDb()
+  const dbTransactions = useTransaction()
+  const [transactions, setTransactions] = useState([])
+
+  useEffect(() => {
+    if (dbTransactions) {
+      setTransactions(dbTransactions)
+    }
+  }, [dbTransactions])
 
   const formik = useFormik({
     initialValues: {
@@ -23,27 +30,24 @@ export const MoneyTransaction = () => {
     },
     validateOnChange: false,
     onSubmit: (transaction) => {
-      const newId = dbData.moneyTransaction.length
-      setDbData(({ moneyTransaction, ...rest }) => ({
-        ...rest,
-        moneyTransaction: [
-          ...moneyTransaction,
-          {
-            id: newId,
-            creditorId: parseInt(transaction.creditorId),
-            debitorId: parseInt(transaction.debitorId),
-            amount: transaction.amount,
-            paidAt: null
-          }
-        ]
-      }))
+      const newTransaction = {
+        id: dbTransactions.length + 1,
+        creditorId: parseInt(transaction.creditorId),
+        debitorId: parseInt(transaction.debitorId),
+        amount: transaction.amount,
+        paidAt: null
+      }
+      addTransaction(newTransaction)
+      setTransactions((prev) => [...prev, newTransaction])
     }
   })
 
   return (
     <div className={styles.container}>
       <Create formik={formik} />
-      <List />
+      {transactions && (
+        <List transactions={transactions} setTransactions={setTransactions} />
+      )}
     </div>
   )
 }

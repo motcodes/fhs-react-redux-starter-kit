@@ -4,25 +4,23 @@ import { Button } from './components/button'
 import { MoneyTransaction } from './components/moneyTransaction'
 import { SignIn } from './components/signIn'
 import { SignUp } from './components/signUp'
-import { useDb } from './context/db'
+import { useUser } from './context/userContext'
 import './styles/global.css'
 
 function App() {
-  const { dbData, logOut } = useDb()
-  const { currentUser } = dbData
+  const { currentUser, logOut } = useUser()
 
   return (
     <div>
       <header className="header">
-        {currentUser && (
+        {Object.keys(currentUser).length !== 0 ? (
           <>
             <p>{currentUser.name}</p>
             <Button variant="secondary" onClick={logOut}>
               Log Out
             </Button>
           </>
-        )}
-        {!currentUser && (
+        ) : (
           <>
             <Link to="sign-in">Sign In</Link>
             <Link to="sign-up">Sign Up</Link>
@@ -30,9 +28,10 @@ function App() {
         )}
       </header>
       <Routes>
-        <Route path="/sign-in" element={<SignIn />} />
-        <Route path="/sign-up" element={<SignUp />} />
-        <Route path="/money-transactions" element={<MoneyTransaction />} />
+        <Route index element={<SignIn />} />
+        <Route path="sign-in" element={<SignIn />} />
+        <Route path="sign-up" element={<SignUp />} />
+        <Route path="money-transactions" element={<MoneyTransaction />} />
       </Routes>
     </div>
   )
