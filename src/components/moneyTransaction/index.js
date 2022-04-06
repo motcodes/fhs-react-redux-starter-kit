@@ -4,9 +4,11 @@ import { Create } from './create'
 import { List } from './list'
 import { useFormik } from 'formik'
 import { addTransaction, useTransaction } from '../../utils/transactions'
+import { useDbUsers } from '../../utils/users'
 
 export const MoneyTransaction = () => {
   const dbTransactions = useTransaction()
+  const dbUsers = useDbUsers()
   const [transactions, setTransactions] = useState([])
 
   useEffect(() => {
@@ -21,19 +23,25 @@ export const MoneyTransaction = () => {
       debitorId: 1,
       amount: 0
     },
-    validate: ({ amount }) => {
+    validate: ({ amount, creditorId, debitorId }) => {
       const errors = {}
       if (amount <= 0) {
         errors.amount = "Amount can't be 0 or less"
       }
+      if (creditorId === 1) {
+        errors.creditor = 'Choose a creditor'
+      }
+      if (debitorId === 1) {
+        errors.debitor = 'Choose a creditor'
+      }
+
       return errors
     },
     validateOnChange: false,
     onSubmit: (transaction) => {
       const newTransaction = {
-        id: dbTransactions.length + 1,
-        creditorId: parseInt(transaction.creditorId),
-        debitorId: parseInt(transaction.debitorId),
+        creditorId: transaction.creditorId,
+        debitorId: transaction.debitorId,
         amount: transaction.amount,
         paidAt: null
       }
@@ -44,7 +52,7 @@ export const MoneyTransaction = () => {
 
   return (
     <div className={styles.container}>
-      <Create formik={formik} />
+      {dbUsers && <Create formik={formik} />}
       {transactions && (
         <List transactions={transactions} setTransactions={setTransactions} />
       )}

@@ -1,7 +1,11 @@
 import React, { createContext, useContext, useState } from 'react'
-import { BaseUrl, fetcher, useFetch } from '../utils/fetcher'
+import { addDoc, collection } from 'firebase/firestore'
+import { db } from '../firebase-config'
+import { useDbUsers } from '../utils/users'
 
 const UserContext = createContext()
+
+const userCollectionRef = collection(db, 'user')
 
 export function UserProvider({ children }) {
   const [currentUser, setCurrentUser] = useState({})
@@ -15,7 +19,7 @@ export function useUser() {
   if (context === undefined) {
     throw new Error('useDb must be used within a UserProvider')
   }
-  const dbUsers = useFetch(BaseUrl + '/user')
+  const dbUsers = useDbUsers()
 
   const logOut = () => {
     context.setCurrentUser(null)
@@ -34,11 +38,7 @@ export function useUser() {
 
   async function addUser(user) {
     try {
-      const addedUser = fetcher(BaseUrl + '/user', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(user)
-      })
+      const addedUser = await addDoc(userCollectionRef, user)
       console.log('addedUser :', addedUser)
       context.setCurrentUser({
         id: user.id,

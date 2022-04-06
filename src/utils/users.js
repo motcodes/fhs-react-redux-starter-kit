@@ -1,8 +1,24 @@
-import { BaseUrl, fetcher, useFetch } from './fetcher'
+import { collection, getDocs } from 'firebase/firestore'
+import { useEffect, useState } from 'react'
+import { db } from '../firebase-config'
 
-export const fetchUsers = fetcher(BaseUrl + '/user')
+const userCollectionRef = collection(db, 'user')
+
+async function getUsers() {
+  const data = await getDocs(userCollectionRef)
+  const parsedData = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
+  return parsedData
+}
 
 export function useDbUsers() {
-  const users = useFetch(BaseUrl + '/user')
-  return users
+  const [response, setResponse] = useState(null)
+  useEffect(() => {
+    const fetching = async () => {
+      const data = await getUsers()
+      setResponse(data)
+    }
+    fetching()
+  }, [])
+
+  return response
 }

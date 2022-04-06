@@ -34,6 +34,7 @@ export const Create = ({ formik }) => {
             options={userOptions}
             value={formik.values.creditorId}
             onChange={formik.handleChange}
+            error={formik.errors.creditor}
           />
           <Select
             id="debitor-select"
@@ -42,6 +43,7 @@ export const Create = ({ formik }) => {
             options={userOptions}
             value={formik.values.debitorId}
             onChange={formik.handleChange}
+            error={formik.errors.debitor}
           />
           <Input
             id="transation-amount"

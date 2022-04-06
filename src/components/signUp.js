@@ -38,8 +38,7 @@ export const SignUp = () => {
     validate,
     validateOnChange: false,
     onSubmit: (formData) => {
-      const newUser = { id: dbUsers.length + 1, ...formData }
-      addUser(newUser)
+      addUser(formData)
       navigate('/money-transactions')
     }
   })
