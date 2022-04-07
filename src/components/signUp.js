@@ -12,19 +12,22 @@ export const SignUp = () => {
   const { addUser } = useUser()
   const dbUsers = useDbUsers()
 
-  const validate = ({ name, username, password }) => {
+  const validate = ({ name, email, password }) => {
     const errors = {}
     if (!name) {
       errors.name = 'Required'
     }
-    if (!username) {
-      errors.username = 'Required'
+    if (!email) {
+      errors.email = 'Required'
     }
-    if (dbUsers.some((user) => user.username === username)) {
-      errors.username = 'Username already taken'
+    if (dbUsers.some((user) => user.email === email)) {
+      errors.email = 'email already taken'
     }
     if (!password) {
       errors.password = 'Required'
+    }
+    if (password < 6) {
+      errors.password = 'at least 6 chars'
     }
     return errors
   }
@@ -32,15 +35,12 @@ export const SignUp = () => {
   const formik = useFormik({
     initialValues: {
       name: '',
-      username: '',
+      email: '',
       password: ''
     },
     validate,
     validateOnChange: false,
-    onSubmit: (formData) => {
-      addUser(formData)
-      navigate('/money-transactions')
-    }
+    onSubmit: (formData) => addUser(formData)
   })
 
   return (
@@ -55,12 +55,12 @@ export const SignUp = () => {
           value={formik.values.name}
         />
         <Input
-          name="username"
-          id="username"
+          name="email"
+          id="email"
           type="text"
-          error={formik.errors.username}
+          error={formik.errors.email}
           onChange={formik.handleChange}
-          value={formik.values.username}
+          value={formik.values.email}
         />
         <Input
           name="password"
@@ -88,7 +88,7 @@ export const SignUp = () => {
           {JSON.stringify(
             {
               name: formik.values.name,
-              username: formik.values.username,
+              email: formik.values.email,
               password: formik.values.password
             },
             null,

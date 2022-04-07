@@ -5,36 +5,26 @@ import { useFormik } from 'formik'
 import { Button } from './button'
 import { Input } from './input'
 import { useUser } from '../context/userContext'
-import { useDbUsers } from '../utils/users'
 import styles from '../styles/signIn.module.css'
 
 export const SignIn = () => {
   const navigate = useNavigate()
   const { logIn } = useUser()
-  const dbUsers = useDbUsers()
 
-  const validate = ({ username, password }) => {
+  const validate = ({ email, password }) => {
     const errors = {}
-    const foundUser = dbUsers.find(
-      (user) => user.username === username && user.password === password
-    )
-    if (!foundUser) {
-      errors.username = "doesn't match user"
-      errors.password = "doesn't match user"
-    }
     return errors
   }
 
   const formik = useFormik({
     initialValues: {
-      username: '',
+      email: '',
       password: ''
     },
     validate,
     validateOnChange: false,
     onSubmit: (user) => {
       logIn(user)
-      navigate('/money-transactions')
     }
   })
 
@@ -42,12 +32,12 @@ export const SignIn = () => {
     <>
       <form className={styles.signinContainer} onSubmit={formik.handleSubmit}>
         <Input
-          name="username"
-          id="username"
+          name="email"
+          id="email"
           type="text"
-          error={formik.errors.username}
+          error={formik.errors.email}
           onChange={formik.handleChange}
-          value={formik.values.username}
+          value={formik.values.email}
         />
         <Input
           name="password"

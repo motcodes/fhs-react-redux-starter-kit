@@ -1,11 +1,13 @@
 import React, { createContext, useContext, useState } from 'react'
-import { addDoc, collection } from 'firebase/firestore'
-import { db } from '../firebase-config'
-import { useDbUsers } from '../utils/users'
+import { doc, getDoc, setDoc } from 'firebase/firestore'
+import { auth, db } from '../firebase-config'
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword
+} from 'firebase/auth'
+import { useNavigate } from 'react-router-dom'
 
 const UserContext = createContext()
-
-const userCollectionRef = collection(db, 'user')
 
 export function UserProvider({ children }) {
   const [currentUser, setCurrentUser] = useState({})
@@ -16,10 +18,10 @@ export function UserProvider({ children }) {
 
 export function useUser() {
   const context = useContext(UserContext)
+  const navigate = useNavigate()
   if (context === undefined) {
     throw new Error('useDb must be used within a UserProvider')
   }
-  const dbUsers = useDbUsers()
 
   const logOut = () => {
     context.setCurrentUser(null)
@@ -27,24 +29,52 @@ export function useUser() {
     window.location.href = '/'
   }
 
-  function logIn(user) {
-    const currentUser = dbUsers.find((item) => item.username === user.username)
+  async function logIn(user) {
+    const userCredentials = await signInWithEmailAndPassword(
+      auth,
+      user.email,
+      user.password
+    )
+
+    const loggedInUser = await getDoc(doc(db, 'user', userCredentials.user.uid))
+    const { name } = loggedInUser.data()
     context.setCurrentUser({
-      id: currentUser.id,
-      username: currentUser.username,
-      name: currentUser.name
+      id: loggedInUser.id,
+      email: loggedInUser.email,
+      name: name
     })
+    navigate('/money-transactions')
+  }
+
+  async function sessionLogin(user) {
+    const loggedInUser = await getDoc(doc(db, 'user', user.uid))
+    const { name } = loggedInUser.data()
+    context.setCurrentUser({
+      id: loggedInUser.id,
+      email: loggedInUser.email,
+      name: name
+    })
+    navigate('/money-transactions')
   }
 
   async function addUser(user) {
     try {
-      const addedUser = await addDoc(userCollectionRef, user)
+      const userCredentials = await createUserWithEmailAndPassword(
+        auth,
+        user.email,
+        user.password
+      )
+
+      const uid = userCredentials.user.uid
+
+      const addedUser = await setDoc(doc(db, 'user', uid), { name: user.name })
       console.log('addedUser :', addedUser)
       context.setCurrentUser({
         id: user.id,
-        username: user.username,
+        username: user.email,
         name: user.name
       })
+      navigate('/money-transactions')
     } catch (error) {
       console.log('Could not sign you in.')
       console.error(error)
@@ -55,6 +85,7 @@ export function useUser() {
     ...context,
     logIn,
     logOut,
-    addUser
+    addUser,
+    sessionLogin
   }
 }
