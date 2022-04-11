@@ -3,7 +3,8 @@ import { doc, getDoc, setDoc } from 'firebase/firestore'
 import { auth, db } from '../firebase-config'
 import {
   createUserWithEmailAndPassword,
-  signInWithEmailAndPassword
+  signInWithEmailAndPassword,
+  signOut
 } from 'firebase/auth'
 import { useNavigate } from 'react-router-dom'
 
@@ -24,9 +25,14 @@ export function useUser() {
   }
 
   const logOut = () => {
-    context.setCurrentUser(null)
-    // somehow react routers navigate rendered a blank page
-    window.location.href = '/'
+    try {
+      signOut(auth)
+      context.setCurrentUser(null)
+      // somehow react routers navigate rendered a blank page
+      window.location.href = '/'
+    } catch {
+      console.log('could not sign you out')
+    }
   }
 
   async function logIn(user) {
@@ -38,9 +44,10 @@ export function useUser() {
 
     const loggedInUser = await getDoc(doc(db, 'user', userCredentials.user.uid))
     const { name } = loggedInUser.data()
+
     context.setCurrentUser({
       id: loggedInUser.id,
-      email: loggedInUser.email,
+      email: userCredentials.user.email,
       name: name
     })
     navigate('/money-transactions')
