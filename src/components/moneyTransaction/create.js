@@ -1,24 +1,24 @@
-import React, { useState, useEffect } from 'react'
+import React, { useMemo } from 'react'
 import { Button } from '../button'
 import { Input } from '../input'
 import { Select } from '../select'
 import styles from '../../styles/moneyTransaction.module.css'
-import { useDbUsers } from '../../utils/users'
 
-export const Create = ({ formik }) => {
-  const dbUsers = useDbUsers()
-  const [userOptions, setUserOptions] = useState(dbUsers)
+export const Create = ({ formik, dbUsers }) => {
+  // dbUsers now gets added as a prop to remove a fetch request
+  // and create only renders if dbUsers has a value
+  // this means that we don't need a state for userOptions
+  // which updates if dbUsers gets a value
+  // we cant just map over it and by using Memo it doesn't run on each render
+  const userOptions = useMemo(
+    () =>
+      dbUsers.map((user) => ({
+        label: user.name,
+        value: user.id
+      })),
+    [dbUsers]
+  )
 
-  useEffect(() => {
-    if (dbUsers) {
-      setUserOptions(
-        dbUsers.map((user) => ({
-          label: user.name,
-          value: user.id
-        }))
-      )
-    }
-  }, [dbUsers])
   return (
     <section className={styles.createContainer}>
       <h1>
@@ -46,7 +46,7 @@ export const Create = ({ formik }) => {
             error={formik.errors.debitor}
           />
           <Input
-            id="transation-amount"
+            id="transaction-amount"
             name="amount"
             type="number"
             step="0.01"

@@ -4,7 +4,7 @@ import { db } from '../firebase-config'
 
 const transactionCollectionRef = collection(db, 'transactions')
 
-async function getTranscation() {
+async function getTransaction() {
   const data = await getDocs(transactionCollectionRef)
   const parsedData = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
   return parsedData
@@ -14,7 +14,7 @@ export function useTransaction() {
   const [response, setResponse] = useState(null)
   useEffect(() => {
     const fetching = async () => {
-      const data = await getTranscation()
+      const data = await getTransaction()
       setResponse(data)
     }
     fetching()
@@ -27,7 +27,8 @@ export async function addTransaction(transaction) {
   try {
     const addedTransaction = await addDoc(transactionCollectionRef, transaction)
 
-    console.log('addedTransaction :', addedTransaction)
+    console.log('addedTransaction :', addedTransaction.id)
+    return addedTransaction.id
   } catch (error) {
     console.error(error)
   }
@@ -37,10 +38,10 @@ export async function updateTransaction(transaction) {
   console.log('transaction :', transaction)
   try {
     const transactionRef = doc(db, 'transactions', transaction.id)
-    const updatedTransaction = await updateDoc(transactionRef, {
+    await updateDoc(transactionRef, {
       paidAt: transaction.paidAt
     })
-    console.log('updated :', updatedTransaction)
+    console.log('updated transaction: ', transaction.id)
   } catch (error) {
     console.error(error)
   }

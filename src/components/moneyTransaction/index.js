@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from 'react'
-import styles from '../../styles/moneyTransaction.module.css'
+import { useFormik } from 'formik'
 import { Create } from './create'
 import { List } from './list'
-import { useFormik } from 'formik'
 import { addTransaction, useTransaction } from '../../utils/transactions'
 import { useDbUsers } from '../../utils/users'
+import { ErrorBoundary } from '../errorBoundary'
+import styles from '../../styles/moneyTransaction.module.css'
 
 export const MoneyTransaction = () => {
-  const dbTransactions = useTransaction()
+  // moved dbUsers from ListItem and List to parent so it only gets called once
+  // instead of calling it in every ListItem
   const dbUsers = useDbUsers()
+  const dbTransactions = useTransaction()
   const [transactions, setTransactions] = useState([])
 
   useEffect(() => {
@@ -38,23 +41,32 @@ export const MoneyTransaction = () => {
       return errors
     },
     validateOnChange: false,
-    onSubmit: (transaction) => {
+    onSubmit: async (transaction) => {
       const newTransaction = {
         creditorId: transaction.creditorId,
         debitorId: transaction.debitorId,
         amount: transaction.amount,
         paidAt: null
       }
-      addTransaction(newTransaction)
+      const newTransactionId = await addTransaction(newTransaction)
+      newTransaction.id = newTransactionId
       setTransactions((prev) => [...prev, newTransaction])
     }
   })
 
   return (
     <div className={styles.container}>
-      {dbUsers && <Create formik={formik} />}
-      {transactions && (
-        <List transactions={transactions} setTransactions={setTransactions} />
+      {dbUsers && (
+        <ErrorBoundary>
+          <Create formik={formik} dbUsers={dbUsers} />
+          {transactions && (
+            <List
+              transactions={transactions}
+              setTransactions={setTransactions}
+              dbUsers={dbUsers}
+            />
+          )}
+        </ErrorBoundary>
       )}
     </div>
   )

@@ -1,14 +1,18 @@
 import React from 'react'
 import styles from '../styles/button.module.css'
 
+// put default values outside so it doesn't create e.g. VARIANTS
+// on each Button use
+const VARIANTS = 'primary' || 'secondary'
+const EMPTY = ''
+
 export const Button = ({
-  variant = 'primary' || 'secondary',
-  className = '',
+  variant = VARIANTS,
+  className = EMPTY,
   onClick,
   children,
   ...rest
 }) => {
-  // console.log(onClick)
   return (
     <button
       {...rest}

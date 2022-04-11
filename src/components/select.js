@@ -1,13 +1,17 @@
 import React from 'react'
 import style from '../styles/input.module.css'
 
+const DEFAULT_OPTIONS = [{ value: 0, label: 'Value' }]
+const EMPTY = ''
+const ZERO = 0
+
 export const Select = ({
   className,
   id,
   name,
-  label = '',
-  value = 0,
-  options = [{ value: 0, label: 'Value' }],
+  label = EMPTY,
+  value = ZERO,
+  options = DEFAULT_OPTIONS,
   onChange,
   error,
   ...rest
