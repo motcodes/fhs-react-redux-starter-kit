@@ -1,5 +1,12 @@
 import React, { createContext, useContext, useState } from 'react'
-import { BaseUrl, fetcher, useFetch } from '../utils/fetcher'
+import { doc, getDoc, setDoc } from 'firebase/firestore'
+import { auth, db } from '../firebase-config'
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut
+} from 'firebase/auth'
+import { useNavigate } from 'react-router-dom'
 
 const UserContext = createContext()
 
@@ -12,39 +19,69 @@ export function UserProvider({ children }) {
 
 export function useUser() {
   const context = useContext(UserContext)
+  const navigate = useNavigate()
   if (context === undefined) {
     throw new Error('useDb must be used within a UserProvider')
   }
-  const dbUsers = useFetch(BaseUrl + '/user')
 
   const logOut = () => {
-    context.setCurrentUser(null)
-    // somehow react routers navigate rendered a blank page
-    window.location.href = '/'
+    try {
+      signOut(auth)
+      context.setCurrentUser(null)
+      // somehow react routers navigate rendered a blank page
+      window.location.href = '/'
+    } catch {
+      console.log('could not sign you out')
+    }
   }
 
-  function logIn(user) {
-    const currentUser = dbUsers.find((item) => item.username === user.username)
+  async function logIn(user) {
+    const userCredentials = await signInWithEmailAndPassword(
+      auth,
+      user.email,
+      user.password
+    )
+
+    const loggedInUser = await getDoc(doc(db, 'user', userCredentials.user.uid))
+    const { name } = loggedInUser.data()
+
     context.setCurrentUser({
-      id: currentUser.id,
-      username: currentUser.username,
-      name: currentUser.name
+      id: loggedInUser.id,
+      email: userCredentials.user.email,
+      name: name
     })
+    navigate('/money-transactions')
+  }
+
+  async function sessionLogin(user) {
+    const loggedInUser = await getDoc(doc(db, 'user', user.uid))
+    const { name } = loggedInUser.data()
+    context.setCurrentUser({
+      id: loggedInUser.id,
+      email: loggedInUser.email,
+      name: name
+    })
+    navigate('/money-transactions')
   }
 
   async function addUser(user) {
     try {
-      const addedUser = fetcher(BaseUrl + '/user', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(user)
-      })
+      const userCredentials = await createUserWithEmailAndPassword(
+        auth,
+        user.email,
+        user.password
+      )
+
+      const uid = userCredentials.user.uid
+
+      const addedUser = await setDoc(doc(db, 'user', uid), { name: user.name })
       console.log('addedUser :', addedUser)
       context.setCurrentUser({
         id: user.id,
-        username: user.username,
+        username: user.email,
         name: user.name
       })
+      navigate('/money-transactions')
     } catch (error) {
       console.log('Could not sign you in.')
       console.error(error)
@@ -55,6 +92,7 @@ export function useUser() {
     ...context,
     logIn,
     logOut,
-    addUser
+    addUser,
+    sessionLogin
   }
 }

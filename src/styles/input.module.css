@@ -14,7 +14,8 @@
   outline-color: hsla(219deg, 91%, 59%, 100%);
 }
 
-.isError input {
+.isError input,
+.isError select {
   --error: hsla(0deg, 87%, 52%, 100%);
   border-color: var(--error);
   outline-color: var(--error);

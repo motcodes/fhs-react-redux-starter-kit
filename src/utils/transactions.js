@@ -1,19 +1,31 @@
-import { BaseUrl, fetcher, useFetch } from './fetcher'
+import { collection, getDocs, addDoc, updateDoc, doc } from 'firebase/firestore'
+import { useEffect, useState } from 'react'
+import { db } from '../firebase-config'
 
-export const fetchTransactions = () => fetcher(BaseUrl + '/moneyTransaction')
+const transactionCollectionRef = collection(db, 'transactions')
+
+async function getTranscation() {
+  const data = await getDocs(transactionCollectionRef)
+  const parsedData = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
+  return parsedData
+}
 
 export function useTransaction() {
-  const transactions = useFetch(BaseUrl + '/moneyTransaction')
-  return transactions
+  const [response, setResponse] = useState(null)
+  useEffect(() => {
+    const fetching = async () => {
+      const data = await getTranscation()
+      setResponse(data)
+    }
+    fetching()
+  }, [])
+
+  return response
 }
 
 export async function addTransaction(transaction) {
   try {
-    const addedTransaction = fetcher(BaseUrl + '/moneyTransaction', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(transaction)
-    })
+    const addedTransaction = await addDoc(transactionCollectionRef, transaction)
 
     console.log('addedTransaction :', addedTransaction)
   } catch (error) {
@@ -24,14 +36,10 @@ export async function addTransaction(transaction) {
 export async function updateTransaction(transaction) {
   console.log('transaction :', transaction)
   try {
-    const updatedTransaction = fetcher(
-      `${BaseUrl}/moneyTransaction/${parseInt(transaction.id)}`,
-      {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(transaction)
-      }
-    )
+    const transactionRef = doc(db, 'transactions', transaction.id)
+    const updatedTransaction = await updateDoc(transactionRef, {
+      paidAt: transaction.paidAt
+    })
     console.log('updated :', updatedTransaction)
   } catch (error) {
     console.error(error)

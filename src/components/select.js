@@ -9,13 +9,22 @@ export const Select = ({
   value = 0,
   options = [{ value: 0, label: 'Value' }],
   onChange,
+  error,
   ...rest
 }) => {
   return (
-    <label className={`${style.container} ${className}`} htmlFor={id}>
+    <label
+      className={`${style.container} ${className} ${
+        error ? style.isError : ''
+      }`}
+      htmlFor={id}
+    >
       {label}
       <select {...rest} id={id} name={name} value={value} onChange={onChange}>
         Select
+        <option selected default>
+          select
+        </option>
         {options &&
           options.map((option) => (
             <option key={option.value} value={option.value}>
@@ -23,6 +32,7 @@ export const Select = ({
             </option>
           ))}
       </select>
+      {error && <span className={style.errorNotice}>{error}</span>}
     </label>
   )
 }
