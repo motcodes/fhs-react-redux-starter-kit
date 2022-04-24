@@ -1,8 +1,10 @@
 import React from 'react'
 import style from '../styles/input.module.css'
 
+const EMPTY = ''
+
 export const Input = ({
-  className = '',
+  className = EMPTY,
   name,
   id,
   value,

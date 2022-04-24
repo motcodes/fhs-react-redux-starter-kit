@@ -10,6 +10,11 @@ import { useNavigate } from 'react-router-dom'
 
 const UserContext = createContext()
 
+// outsourced reoccurring function
+const getUserRef = (uid) => doc(db, 'user', uid)
+const getUserDoc = (uid) => getDoc(getUserRef(uid))
+
+// User Provider
 export function UserProvider({ children }) {
   const [currentUser, setCurrentUser] = useState({})
 
@@ -17,12 +22,15 @@ export function UserProvider({ children }) {
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>
 }
 
+// User Hook
 export function useUser() {
   const context = useContext(UserContext)
-  const navigate = useNavigate()
+
   if (context === undefined) {
     throw new Error('useDb must be used within a UserProvider')
   }
+
+  const navigate = useNavigate()
 
   const logOut = () => {
     try {
@@ -31,7 +39,7 @@ export function useUser() {
       // somehow react routers navigate rendered a blank page
       window.location.href = '/'
     } catch {
-      console.log('could not sign you out')
+      console.error('could not sign you out')
     }
   }
 
@@ -42,7 +50,7 @@ export function useUser() {
       user.password
     )
 
-    const loggedInUser = await getDoc(doc(db, 'user', userCredentials.user.uid))
+    const loggedInUser = await getUserDoc(userCredentials.user.uid)
     const { name } = loggedInUser.data()
 
     context.setCurrentUser({
@@ -54,14 +62,19 @@ export function useUser() {
   }
 
   async function sessionLogin(user) {
-    const loggedInUser = await getDoc(doc(db, 'user', user.uid))
-    const { name } = loggedInUser.data()
-    context.setCurrentUser({
-      id: loggedInUser.id,
-      email: loggedInUser.email,
-      name: name
-    })
-    navigate('/money-transactions')
+    try {
+      const loggedInUser = await getUserDoc(user.uid)
+      const { name } = loggedInUser.data()
+      context.setCurrentUser({
+        id: loggedInUser.id,
+        email: loggedInUser.email,
+        name: name
+      })
+      navigate('/money-transactions')
+    } catch {
+      console.log("couldn't auto login in")
+      navigate('/sign-in')
+    }
   }
 
   async function addUser(user) {
@@ -72,9 +85,9 @@ export function useUser() {
         user.password
       )
 
-      const uid = userCredentials.user.uid
-
-      const addedUser = await setDoc(doc(db, 'user', uid), { name: user.name })
+      const addedUser = await setDoc(getUserRef(userCredentials.user.uid), {
+        name: user.name
+      })
       console.log('addedUser :', addedUser)
       context.setCurrentUser({
         id: user.id,

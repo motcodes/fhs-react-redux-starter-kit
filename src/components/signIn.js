@@ -6,6 +6,7 @@ import { Button } from './button'
 import { Input } from './input'
 import { useUser } from '../context/userContext'
 import styles from '../styles/signIn.module.css'
+import { ErrorBoundary } from './errorBoundary'
 
 export const SignIn = () => {
   const navigate = useNavigate()
@@ -29,7 +30,7 @@ export const SignIn = () => {
   })
 
   return (
-    <>
+    <ErrorBoundary>
       <form className={styles.signinContainer} onSubmit={formik.handleSubmit}>
         <Input
           name="email"
@@ -58,6 +59,6 @@ export const SignIn = () => {
           </Button>
         </div>
       </form>
-    </>
+    </ErrorBoundary>
   )
 }

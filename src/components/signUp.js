@@ -44,7 +44,7 @@ export const SignUp = () => {
   })
 
   return (
-    <>
+    <errorBoundary>
       <form className={styles.signinContainer} onSubmit={formik.handleSubmit}>
         <Input
           name="name"
@@ -96,6 +96,6 @@ export const SignUp = () => {
           )}
         </pre>
       </div>
-    </>
+    </errorBoundary>
   )
 }
